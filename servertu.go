@@ -4,6 +4,9 @@ import (
 	"io"
 	"log"
 
+	"encoding/hex"
+	"strconv"
+
 	"github.com/goburrow/serial"
 )
 
@@ -80,8 +83,7 @@ SkipFrameError:
 			report(err)
 			return
 		}
-		log.Printf("bytesRead")
-		log.Println(bytesRead)
+		log.Println("收到"+strconv.Itoa(bytesRead)+"字节:", hex.EncodeToString(buffer[:bytesRead]))
 
 		if bytesRead != 0 {
 
@@ -136,8 +138,7 @@ SkipFrameError:
 			report(err)
 			return
 		}
-		log.Printf("bytesRead")
-		log.Println(bytesRead)
+		log.Println("收到"+strconv.Itoa(bytesRead)+"字节:", hex.EncodeToString(buffer[:bytesRead]))
 		if bytesRead <= 2 {
 			data = buffer[:bytesRead]
 			total = bytesRead
