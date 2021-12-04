@@ -216,11 +216,13 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 				if err != nil {
 					log.Printf("bad serial frame error %v\n", err)
 					log.Printf("Keep the RTU server running!!\n")
+					
+					data = []byte{}
+					total = 0
+					continue
 				}
 				request := &Request{port, frame}
 				s.requestChan <- request
-				data = []byte{}
-				total = 0
 			}
 		}
 	}
