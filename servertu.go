@@ -198,11 +198,12 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 			return
 		}
 		log.Println("收到"+strconv.Itoa(bytesRead)+"字节:", hex.EncodeToString(buffer[:bytesRead]))
+		/*
 		if bytesRead <= 2 {
 			data = buffer[:bytesRead]
 			total = total + bytesRead
 			continue
-		}
+		}*/
 		data = append(data[:total], buffer[:bytesRead]...)
 		total = total + bytesRead
 		log.Println("数据收到长度", total)
