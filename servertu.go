@@ -199,11 +199,11 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 		}
 		log.Println("收到"+strconv.Itoa(bytesRead)+"字节:", hex.EncodeToString(buffer[:bytesRead]))
 		/*
-		if bytesRead <= 2 {
-			data = buffer[:bytesRead]
-			total = total + bytesRead
-			continue
-		}*/
+			if bytesRead <= 2 {
+				data = buffer[:bytesRead]
+				total = total + bytesRead
+				continue
+			}*/
 		data = append(data[:total], buffer[:bytesRead]...)
 		total = total + bytesRead
 		log.Println("数据收到长度", total)
@@ -212,6 +212,24 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 			registerDataLength = int(data[6])
 			log.Println("校验数据帧是否完整...")
 			if total == registerDataLength+9 {
+				// 数据帧接收完整开始解析
+				frame, err := NewRTUFrame(data)
+				if err != nil {
+					log.Printf("bad serial frame error %v\n", err)
+					log.Printf("Keep the RTU server running!!\n")
+					data = []byte{}
+					total = 0
+					continue
+				}
+				request := &Request{port, frame}
+				s.requestChan <- request
+				data = []byte{}
+				total = 0
+			}
+		}
+		if data[0] == 0x01 && data[1] == 0x03 {
+			log.Println("校验数据帧是否完整...")
+			if total == 8 {
 				// 数据帧接收完整开始解析
 				frame, err := NewRTUFrame(data)
 				if err != nil {
