@@ -210,7 +210,7 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 		log.Println("数据帧内容", hex.EncodeToString(data[:total]))
 		if data[0] == 0x01 && data[1] == 0x10 && int(data[6])/int(binary.BigEndian.Uint16(data[4:6])) == 2 {
 			registerDataLength = int(data[6])
-			log.Println("校验数据帧是否完整...")
+			log.Println("校验0X10数据帧是否完整...")
 			if total == registerDataLength+9 {
 				// 数据帧接收完整开始解析
 				frame, err := NewRTUFrame(data)
@@ -226,9 +226,8 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 				data = []byte{}
 				total = 0
 			}
-		}
-		if data[0] == 0x01 && data[1] == 0x03 {
-			log.Println("校验数据帧是否完整...")
+		} else if data[0] == 0x01 && data[1] == 0x03 {
+			log.Println("校验0X03数据帧是否完整...")
 			if total == 8 {
 				// 数据帧接收完整开始解析
 				frame, err := NewRTUFrame(data)
@@ -244,6 +243,8 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 				data = []byte{}
 				total = 0
 			}
+		} else {
+			log.Println("数据帧正在粘包...")
 		}
 
 		// 超过100个字节说明报文有问题
