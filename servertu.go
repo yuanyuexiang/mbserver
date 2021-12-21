@@ -198,16 +198,15 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 			return
 		}
 		log.Println("收到"+strconv.Itoa(bytesRead)+"字节:", hex.EncodeToString(buffer[:bytesRead]))
-		/*
-			if bytesRead <= 2 {
-				data = buffer[:bytesRead]
-				total = total + bytesRead
-				continue
-			}*/
+		
 		data = append(data[:total], buffer[:bytesRead]...)
 		total = total + bytesRead
 		log.Println("数据收到长度", total)
 		log.Println("数据帧内容", hex.EncodeToString(data[:total]))
+		// modbus 最低报文长度
+		if total < 8 {
+			continue
+		}
 		if data[0] == 0x01 && data[1] == 0x10 && int(data[6])/int(binary.BigEndian.Uint16(data[4:6])) == 2 {
 			registerDataLength = int(data[6])
 			log.Println("校验0X10数据帧是否完整...")
