@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"strings"
+	"time"
 )
 
 func (s *Server) accept(listen net.Listener) error {
@@ -81,6 +82,7 @@ func (s *Server) acceptX(listen net.Listener, report func(address string, err er
 			defer report(conn.RemoteAddr().String(), errors.New("connection close"))
 			for {
 				packet := make([]byte, 512)
+				conn.SetReadDeadline(time.Now().Add(5 * time.Second))
 				bytesRead, err := conn.Read(packet)
 				if err != nil {
 					if err != io.EOF {
