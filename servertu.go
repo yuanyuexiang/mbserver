@@ -204,7 +204,7 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 		log.Println("数据收到长度", total)
 		log.Println("数据帧内容", hex.EncodeToString(data[:total]))
 		// modbus 最低报文长度
-		if total < 8 {
+		if total < 7 {
 			continue
 		}
 		if data[0] == 0x01 && data[1] == 0x10 && int(data[6])/int(binary.BigEndian.Uint16(data[4:6])) == 2 {
