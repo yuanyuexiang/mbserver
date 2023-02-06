@@ -242,12 +242,17 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 				data = []byte{}
 				total = 0
 			}
+		} else if data[0] == 0x0B && data[1] == 0x06 {
+			log.Println("0X06数据帧暂时不处理...")
+			data = []byte{}
+			total = 0
 		} else {
 			log.Println("数据帧正在粘包...")
 		}
 
 		// 超过100个字节说明报文有问题
 		if total > 100 {
+			log.Println("数据帧有问题...")
 			data = []byte{}
 			total = 0
 		}
