@@ -242,7 +242,7 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 				data = []byte{}
 				total = 0
 			}
-		} else if data[0] == 0x0B && data[1] == 0x06 {
+		} else if data[0] == 0x0b && data[1] == 0x06 {
 			log.Println("0X06数据帧暂时不处理...")
 			data = []byte{}
 			total = 0
