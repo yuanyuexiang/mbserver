@@ -247,7 +247,7 @@ func (s *Server) acceptSerialRequestsX(port serial.Port, report func(err error))
 			data = []byte{}
 			total = 0
 		} else {
-			log.Println("数据帧正在粘包...")
+			log.Println("数据帧正在组合...")
 		}
 
 		// 超过100个字节说明报文有问题
